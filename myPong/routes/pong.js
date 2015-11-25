@@ -40,6 +40,7 @@ GameController.prototype.addRandomBall = function(){
 };
 
 router.get('/', function(req, res, next) {
+    console.log("end0");
     if (!gameCtrl){
         gameCtrl = new GameController({
             "width" : 1500,
@@ -47,16 +48,31 @@ router.get('/', function(req, res, next) {
         });
         gameCtrl.play();
     }
+
+    console.log("end1");
     res.render('pong',
         {   title: 'myPong',
             game : JSON.stringify(gameCtrl.game)
         }
     );
-    console.log("end");
+    console.log("end2");
 });
 
 router.get('/balls', function(req, res, next) {
     res.json(gameCtrl.game.balls);
+});
+
+router.post('/togglePlay', function(req, res, next){
+    console.log("Player wanna Play");
+    gameCtrl.play();
+    res.send('200')
+});
+
+router.post('/pause', function(req, res, next){
+    console.log("Player wanna pause")
+    gameCtrl.play();
+
+    res.send('200')
 });
 
 module.exports = router;

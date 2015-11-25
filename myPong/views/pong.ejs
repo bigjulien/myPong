@@ -1,178 +1,134 @@
 <html>
-<head>
-    <title>My Pong</title>
-    <meta charset=utf-8 />
-    <!--
-    <meta http-equiv="refresh" content="0">
-    -->
-   <!--
-   <script type="text/javascript" src="gameMotor.js"></script>
-    <script type="text/javascript" src="gameController.js"></script>
-    -->
-    <script type="text/javascript"  src="../javascripts/jquery-1.11.3.js"></script>
-    <script type="text/javascript"  src="../stylesheets/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="../stylesheets/bootstrap-3.3.5-dist/css/bootstrap.css">
-</head>
-<body>
-    <nav id='navbar' class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile displ       ay -->
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">My Pong</a>
-            </div>
+    <head>
+        <title>My Pong</title>
+        <meta charset=utf-8 />
+        <!--
+        <meta http-equiv="refresh" content="0">
+        -->
+       <!--
+       <script type="text/javascript" src="gameMotor.js"></script>
+        <script type="text/javascript" src="gameController.js"></script>
+        -->
+        <script type="text/javascript"  src="../javascripts/jquery-1.11.3.js"></script>
+        <script type="text/javascript"  src="../javascripts/drawing.js"></script>
+        <script type="text/javascript"  src="../stylesheets/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="../stylesheets/bootstrap-3.3.5-dist/css/bootstrap.css">
+    </head>
+    <body>
+        <nav id='navbar' class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile displ       ay -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">My Pong</a>
+                </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Speed <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">0.1</a></li>
-                            <li><a href="#">0.3</a></li>
-                            <li><a href="#">0.5</a></li>
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <button id ="addBallBtn" type="button" class="btn btn-default navbar-btn">Add a ball</button>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Speed <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">0.1</a></li>
+                                <li><a href="#">0.3</a></li>
+                                <li><a href="#">0.5</a></li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <button id ="addBallBtn" type="button" class="btn btn-default navbar-btn">Add a ball</button>
 
-                <button id ="playBtn" type="button" class="btn btn-default navbar-btn navbar-right play"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
-            </div>
-        </div><!-- /.container-fluid -->
-    </nav>
+                    <button id ="playBtn" type="button" class="btn btn-default navbar-btn navbar-right play"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+                </div>
+            </div><!-- /.container-fluid -->
+        </nav>
 
-<div id="gameArea" >
-    <canvas id="fieldCanvas" />
+        <div id="gameArea" >
+            <canvas id="fieldCanvas" />
+        </div>
 
-</div>
+        <script>
 
-<script>
-    //DRAWING UTILS
-    function drawField(params, ctx){
-        drawPlayground(params.field, ctx);
-        drawBalls(params.balls, ctx);
-    }
+            var canvas = document.getElementById("fieldCanvas");
+            canvas.width=document.getElementById('navbar').offsetWidth;
+            canvas.height=window.innerHeight-document.getElementById("fieldCanvas").getBoundingClientRect().top;
+            var ctx = canvas.getContext("2d");
 
-    function drawPlayground (params,ctx) {
-        var width = params.width,
-                height = params.height;
-        ctx.clearRect(0,0,width,height);
-        ctx.strokeStyle = "#7f7";
-        ctx.lineWidth = 5;
-        ctx.strokeRect(0,0,width,height);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(width/2,0);
-        ctx.lineTo(width/2,height);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(width/2,height/2,height*0.15,0,2*Math.PI);
-        ctx.stroke();
-        //left goal
-        ctx.strokeRect(0,height*0.3, width*0.1, height*0.4);
-        //right goal
-        ctx.strokeRect(width ,height*0.3, -width*0.1, height*0.4);
-    }
-
-    function drawBalls(balls, ctx){
-        var ball, posX, posY;
-        for (var i = 0; i < balls.length; ++i) {
-            ball = balls[i];
-            posX = ball.position.x;
-            posY = ball.position.y;
-
-            ctx.beginPath();
-            //console.log("Drawing in : " + ball.color);
-            ctx.fillStyle=ball.color;
-            ctx.arc(posX,posY,ball.radius,0, Math.PI*2);
-            ctx.fill();
-            ctx.closePath();
-
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle="#000";
-            ctx.fillText(ball.name,posX,posY);
-            //ctx.fillText("x:" + String((Math.round(ball.velocityVector.x*10)) /10) + " - y:" + String((Math.round(ball.velocityVector.y*10) )/10),posX,posY);
-        }
-        ctx.beginPath();
-    }
-
-    var canvas = document.getElementById("fieldCanvas");
-    canvas.width=document.getElementById('navbar').offsetWidth;
-    canvas.height=window.innerHeight-document.getElementById("fieldCanvas").getBoundingClientRect().top;
-    var ctx = canvas.getContext("2d");
-
-    var playBtn = document.getElementById("playBtn");
+            var playBtn = document.getElementById("playBtn");
 
 
-    var togglePlay = function() {
-        if (playBtn.classList.contains('play')) {
-            console.log('Playing !');
-            playBtn.classList.remove('play');
-            playBtn.classList.add('pause');
-            playBtn.firstElementChild.className="glyphicon glyphicon-play";
-
-        } else if (playBtn.classList.contains('pause')){
-            console.log('nop');
-            playBtn.classList.remove('pause');
-            playBtn.classList.add('play');
-            playBtn.firstElementChild.className="glyphicon glyphicon-pause";
-        } else{
-            console.log("Wat ?");
-            return;
-        }
-        controller.play();
-    }
-    playBtn.addEventListener('click', togglePlay)
-
-    var params = {
-        "context" : ctx,
-        "width" : canvas.width,
-        "height" : canvas.height
-    };
-//    var controller = new GameController(params);
-
-
-    document.getElementById("addBallBtn").addEventListener("click", function(){controller.addRandomBall();});
-
-    //console.log(game, controller);
-
-   // controller.drawGame();
-    //controller.play();
-
-    window.addEventListener("keypress", function(e){
-        if (e.keyCode == 112)
-           controller.play();
-    });
-    //controller.play();
-
-
-     var gamegame =  <%- game %> ;
-    setInterval(function(){
-        $.ajax({
-            url : 'http://localhost:3000/pong/balls', // La ressource ciblée
-            type : 'GET', // Le type de la requête HTTP.
-            dataType : 'json',
-            success : function(result, statut){
-               gamegame.balls = result;
-          //      console.log("OK");
-            },
-
-            error : function(resultat, statut, erreur){
-        //        console.log("NOK");
-            },
-
-            complete : function(resultat, statut){
-                //console.log("END");
+            var togglePlay = function() {
+                if (playBtn.classList.contains('play')) {
+                    console.log('Playing !');
+                    playBtn.classList.remove('play');
+                    playBtn.classList.add('pause');
+                    playBtn.firstElementChild.className="glyphicon glyphicon-play";
+                    clearInterval(currentlyPlaying);
+                } else if (playBtn.classList.contains('pause')){
+                    console.log('nop');
+                    playBtn.classList.remove('pause');
+                    playBtn.classList.add('play');
+                    playBtn.firstElementChild.className="glyphicon glyphicon-pause";
+                    currentlyPlaying = goPlay();
+                }
+                $.ajax({
+                    url : 'http://localhost:3000/pong/togglePlay', // La ressource ciblée
+                    type : 'POST', // Le type de la requête HTTP.
+                    dataType : 'json'
+                });
             }
-        });
-      //  console.log('drawing' + gamegame);
-        drawField( gamegame , ctx); %>
-    },10);
-    console.log("<%= title %>");
-    console.log("<%= game %>");
+            playBtn.addEventListener('click', togglePlay)
 
-</script>
-</body>
+            var params = {
+                "context" : ctx,
+                "width" : canvas.width,
+                "height" : canvas.height
+            };
+        //    var controller = new GameController(params);
+
+
+            document.getElementById("addBallBtn").addEventListener("click", function(){controller.addRandomBall();});
+
+            //console.log(game, controller);
+
+           // controller.drawGame();
+            //controller.play();
+
+            window.addEventListener("keypress", function(e){
+                if (e.keyCode == 112)
+                   togglePlay();
+            });
+
+            function goPlay(){
+                return setInterval(function(){
+                    $.ajax({
+                        url : 'http://localhost:3000/pong/balls', // La ressource ciblée
+                        type : 'GET', // Le type de la requête HTTP.
+                        dataType : 'json',
+                        success : function(result, statut){
+                            gamegame.balls = result;
+                            //      console.log("OK");
+                        },
+
+                        error : function(resultat, statut, erreur){
+                            //        console.log("NOK");
+                        },
+
+                        complete : function(resultat, statut){
+                            //console.log("END");
+                        }
+                    });
+                    //  console.log('drawing' + gamegame);
+                    drawField( gamegame , ctx); %>
+                },10);
+            }
+
+
+             var gamegame =  <%- game %> ;
+            var currentlyPlaying = goPlay();
+            console.log("<%= title %>");
+            console.log("<%= game %>");
+
+        </script>
+    </body>
 </html>
