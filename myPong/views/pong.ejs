@@ -9,38 +9,38 @@
    <script type="text/javascript" src="gameMotor.js"></script>
     <script type="text/javascript" src="gameController.js"></script>
     -->
-    <script type="text/javascript"  src="..\javascripts\jquery-1.11.3.js"></script>
-    <script type="text/javascript"  src="..\stylesheets\bootstrap-3.3.5-dist\js\bootstrap.js"></script>
-    <link rel="stylesheet" href="..\stylesheets\bootstrap-3.3.5-dist\css\bootstrap.css">
+    <script type="text/javascript"  src="../javascripts/jquery-1.11.3.js"></script>
+    <script type="text/javascript"  src="../stylesheets/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../stylesheets/bootstrap-3.3.5-dist/css/bootstrap.css">
 </head>
 <body>
-<nav id='navbar' class="navbar navbar-default">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">My Pong</a>
-        </div>
+    <nav id='navbar' class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile displ       ay -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">My Pong</a>
+            </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Speed <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">0.1</a></li>
-                        <li><a href="#">0.3</a></li>
-                        <li><a href="#">0.5</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <button id ="addBallBtn" type="button" class="btn btn-default navbar-btn">Add a ball</button>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Speed <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">0.1</a></li>
+                            <li><a href="#">0.3</a></li>
+                            <li><a href="#">0.5</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <button id ="addBallBtn" type="button" class="btn btn-default navbar-btn">Add a ball</button>
 
-            <button id ="playBtn" type="button" class="btn btn-default navbar-btn navbar-right play"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
-        </div>
-    </div><!-- /.container-fluid -->
-</nav>
+                <button id ="playBtn" type="button" class="btn btn-default navbar-btn navbar-right play"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
+            </div>
+        </div><!-- /.container-fluid -->
+    </nav>
 
 <div id="gameArea" >
     <canvas id="fieldCanvas" />
@@ -156,19 +156,20 @@
             dataType : 'json',
             success : function(result, statut){
                gamegame.balls = result;
+          //      console.log("OK");
             },
 
             error : function(resultat, statut, erreur){
-
+        //        console.log("NOK");
             },
 
             complete : function(resultat, statut){
-
+                //console.log("END");
             }
         });
-        console.log('drawing' + gamegame);
+      //  console.log('drawing' + gamegame);
         drawField( gamegame , ctx); %>
-    },1);
+    },10);
     console.log("<%= title %>");
     console.log("<%= game %>");
 
