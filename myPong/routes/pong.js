@@ -40,22 +40,20 @@ GameController.prototype.addRandomBall = function(){
 };
 
 router.get('/', function(req, res, next) {
-    console.log("end0");
     if (!gameCtrl){
         gameCtrl = new GameController({
-            "width" : 1500,
-            "height" : 300
+            "width" : 700,
+            "height" : 300,
+            "speed" : 7
         });
         gameCtrl.play();
     }
 
-    console.log("end1");
     res.render('pong',
         {   title: 'myPong',
             game : JSON.stringify(gameCtrl.game)
         }
     );
-    console.log("end2");
 });
 
 router.get('/balls', function(req, res, next) {
