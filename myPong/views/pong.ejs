@@ -28,15 +28,16 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Speed <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">0.1</a></li>
-                                <li><a href="#">0.3</a></li>
-                                <li><a href="#">0.5</a></li>
-                                <li><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
+                                <li><a class="speedBtn" param="3" href="#">++</a></li>
+                                <li><a class="speedBtn" param="1" href="#">+</a></li>
+                                <li><a class="speedBtn" param="-1" href="#">-</a></li>
+                                <li><a class="speedBtn" param="-3" href="#">--</a></li>
                             </ul>
                         </li>
                     </ul>
                     <button id ="addBallBtn" type="button" class="btn btn-default navbar-btn">Add a ball</button>
+
+                    <span id="mousePosition">Coucou</span>
 
                     <button id ="playBtn" type="button" class="btn btn-default navbar-btn navbar-right play"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
                 </div>
@@ -55,7 +56,7 @@
             var ctx = canvas.getContext("2d");
 
             var playBtn = document.getElementById("playBtn");
-
+            var speedBtns = document.getElementsByClassName("speedBtn");
 
             var togglePlay = function() {
                 if (playBtn.classList.contains('play')) {
@@ -79,6 +80,30 @@
             }
             playBtn.addEventListener('click', togglePlay)
 
+            var changeSpeed = function(event){
+                var attrValue = Number($(event.target).attr('param')),
+                        action;
+
+                if (attrValue>0){
+                    action = "increment";
+                }else {
+                    action = "decrement";
+                }
+
+                for (var i = 0 ; i< Math.abs(attrValue) ; ++i){
+                    console.log(action);
+                    $.ajax({
+                        url : 'http://localhost:3000/pong/speed/' + action, // La ressource ciblée
+                        type : 'POST', // Le type de la requête HTTP.
+                        dataType : 'json'
+                    })
+                };
+            };
+
+            for (var i = 0 ; i < speedBtns.length ; ++i){
+                speedBtns[i].addEventListener('click', changeSpeed);
+            }
+
             var params = {
                 "context" : ctx,
                 "width" : canvas.width,
@@ -89,6 +114,18 @@
 
             document.getElementById("addBallBtn").addEventListener("click", function(){controller.addRandomBall();});
 
+
+            $('#gameArea').mousemove(function(event){
+             //   console.log("OVER");
+                $('#mousePosition').html(event.pageX + ' - ' + event.pageY);
+                $.ajax({
+                    url : 'http://localhost:3000/pong/racket', // La ressource ciblée
+                    type : 'POST', // Le type de la requête HTTP.
+                    dataType : 'json',
+                    data : {x : event.pageX,
+                            y : event.pageY}
+                })
+            });
             //console.log(game, controller);
 
            // controller.drawGame();
@@ -106,7 +143,8 @@
                         type : 'GET', // Le type de la requête HTTP.
                         dataType : 'json',
                         success : function(result, statut){
-                            gamegame.balls = result;
+                            gamegame.balls = result.balls;
+                            gamegame.rackets = result.rackets;
                             //      console.log("OK");
                         },
 

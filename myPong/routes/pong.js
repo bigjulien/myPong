@@ -25,7 +25,7 @@ GameController.prototype.play =function(){
         var self=this;
         this.run = setInterval(function(){
             self.game.playOneStep();
-        },10);
+        },25);
     }
 };
 
@@ -44,7 +44,7 @@ router.get('/', function(req, res, next) {
         gameCtrl = new GameController({
             "width" : 700,
             "height" : 300,
-            "speed" : 7
+            "speed" : 3
         });
         gameCtrl.play();
     }
@@ -57,7 +57,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/balls', function(req, res, next) {
-    res.json(gameCtrl.game.balls);
+    res.json({"balls" : gameCtrl.game.balls,
+                "rackets" : gameCtrl.game.rackets}
+    );
 });
 
 router.post('/togglePlay', function(req, res, next){
@@ -71,6 +73,30 @@ router.post('/pause', function(req, res, next){
     gameCtrl.play();
 
     res.send('200')
+});
+
+
+router.post('/speed/increment', function(req, res, next){
+    gameCtrl.game.setSpeed(gameCtrl.game.speed + 1);
+    res.send('200')
+});
+
+router.post('/speed/decrement', function(req, res, next){
+    gameCtrl.game.setSpeed(gameCtrl.game.speed - 1);
+    res.send('200')
+});
+
+router.post('/speed/:speed', function(req, res, next){
+    console.log("Setting speed : " + req.params.speed);
+    gameCtrl.game.setSpeed(req.params.speed);
+    res.send('200')
+});
+
+router.post('/racket', function(req, res, next){
+    gameCtrl.game.rackets[0].ball.position.x = parseInt(req.body.x);
+    gameCtrl.game.rackets[0].ball.position.y = parseInt(req.body.y);
+   // console.log(req.body.y);
+    res.send('200');
 });
 
 module.exports = router;

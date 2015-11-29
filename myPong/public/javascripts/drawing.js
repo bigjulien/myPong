@@ -4,6 +4,7 @@
 //DRAWING UTILS
 function drawField(params, ctx){
     drawPlayground(params.field, ctx);
+    drawRackets(params.rackets,ctx);
     drawBalls(params.balls, ctx);
 }
 
@@ -27,6 +28,15 @@ function drawPlayground (params,ctx) {
     //right goal
     ctx.strokeRect(width ,height*0.3, -width*0.1, height*0.4);
 }
+
+function drawRackets(rackets,ctx){
+    var racketBalls = [];
+    for(var i =0 ; i < rackets.length ; ++i){
+        racketBalls.push(rackets[i].ball);
+    }
+    drawBalls(racketBalls, ctx);
+}
+
 
 function drawBalls(balls, ctx){
     var ball, posX, posY;

@@ -6,6 +6,7 @@ var Field = require('../model/Field.js');
 var Ball = require('../model/Ball.js');
 var Point = require('../model/Point.js');
 var Vector = require('../model/Vector.js');
+var Racket = require('../model/Racket.js');
 
 var random = function(min, max){
     return Math.floor(Math.random()*(max-min+1)+min);
@@ -31,10 +32,11 @@ var randomColor = function(){
 
 function Game(params){
     if (!params) params={};
-    this.speed = params.field || 0.5;
+    this.speed = params.speed || 1;
     this.field = params.field || new Field(params);
     this.balls = params.balls || [];
     this.walls = params.walls || [];
+    this.rackets = [];
 }
 
 
@@ -45,7 +47,20 @@ Game.prototype.addBall = function(ball){
     return pushable;
 };
 
+Game.prototype.createRacket = function(xPos, yPos){
+    console.log('creating racket');
+    var racket = new Racket(xPos, yPos);
+    var pushable = this.field.canContain(racket.ball) && !racket.ball.collidesOneBall(this.balls);
+    if (pushable)
+        this.rackets.push(racket);
+    console.log(pushable);
+    return pushable;
+};
+
 Game.prototype.populate = function(nbBalls){
+
+    this.createRacket(3*this.field.width/4,this.field.height/2);
+
     for (var i = 0 ; i < nbBalls ; ++i){
         var added = this.addBall(new Ball({ "name":i, "radius" : random(25,100), "position" : new randomPoint(0,0,this.field.width,this.field.height),"velocityVector" : new Vector(random(-3,3),random(-3,3)), "color" : randomColor()}));
         while (!added){
@@ -69,6 +84,16 @@ Game.prototype.handleWallCollision = function(ball) {
         ball.bounce("HORIZONTAL");
     else if(nextPosY<ball.radius || nextPosY>(this.field.height-ball.radius))
         ball.bounce("VERTICAL");
+};
+
+Game.prototype.handleRacketCollision = function(ball, racket){
+
+    //console.log('b' + this.rackets[0].ball.position);
+    this.handleBallCollision(ball, racket.ball);
+
+    //console.log('a' + this.rackets[0].ball.position);
+   // console.log("handling for rackets");
+    racket.ball.velocityVector=new Vector(0,0);
 };
 
 Game.prototype.handleBallCollision = function (ballA, ballB) {
@@ -121,10 +146,14 @@ Game.prototype.handleBallCollision = function (ballA, ballB) {
 
 Game.prototype.init = function(){
     this.populate(3);
+    this.modifySpeed(this.speed);
 };
 
 Game.prototype.playOneStep = function() {
     for (var i = 0; i < this.balls.length; ++i) {
+        for(var j=0 ; j < this.rackets.length; ++j){
+            this.handleRacketCollision(this.balls[i], this.rackets[j]);
+        }
         this.handleWallCollision(this.balls[i]);
         for(var j=i+1 ; j < this.balls.length; ++j){
             this.handleBallCollision(this.balls[i],this.balls[j])
@@ -143,8 +172,28 @@ Game.prototype.addRandomBall = function(){
     }
 };
 
+Game.prototype.setSpeed = function (newSpeed){
+    if (newSpeed < 1 || newSpeed > 10){
+        return;
+    }
+    var speedEvolution = newSpeed/this.speed;
+    console.log('Speed from ' + this.speed + ' to ' + newSpeed + '(' + speedEvolution + ')');
+
+    this.modifySpeed(speedEvolution);
+
+    this.speed = newSpeed;
+};
+
+Game.prototype.modifySpeed = function (speedVariation) {
+
+    for(var i = 0 ; i < this.balls.length ; ++i){
+        this.balls[i].velocityVector = this.balls[i].velocityVector.times(speedVariation);
+    }
+
+}
+
 Game.prototype.toString = function(){
-    var str = "Game : ";
+    var str = 'Game : ';
     for(var i = 0; i<this.balls.length ; ++i ){
         str+= this.balls[i].position;
     }
